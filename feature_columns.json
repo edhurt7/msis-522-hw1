@@ -1,0 +1,20 @@
+[
+  "char_len",
+  "word_count",
+  "line_count",
+  "caps_ratio",
+  "punct_density",
+  "non_ascii_ratio",
+  "has_url",
+  "has_email",
+  "has_code_block",
+  "has_base64_like",
+  "override_phrase_count",
+  "jailbreak_phrase_count",
+  "secret_keyword_count",
+  "exfil_phrase_count",
+  "tool_keyword_count",
+  "harm_keyword_count",
+  "mentions_system_or_policy",
+  "external_destination_present"
+]
