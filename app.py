@@ -67,35 +67,116 @@ PRESET_SCENARIOS = {
 def inject_custom_css():
     st.markdown("""
     <style>
-    .stApp {background: radial-gradient(circle at top right, rgba(166,30,77,0.10), transparent 28%), radial-gradient(circle at top left, rgba(11,110,79,0.12), transparent 32%), linear-gradient(180deg, #f6f3ed 0%, #fbfaf7 42%, #f4f6f8 100%);}
+    .stApp {
+        background:
+            radial-gradient(circle at top right, rgba(166,30,77,0.10), transparent 28%),
+            radial-gradient(circle at top left, rgba(11,110,79,0.12), transparent 32%),
+            linear-gradient(180deg, #f6f3ed 0%, #fbfaf7 42%, #f4f6f8 100%);
+    }
     .block-container {padding-top: 1.8rem; padding-bottom: 2.5rem;}
-    h1, h2, h3 {font-family: Georgia, "Times New Roman", serif; letter-spacing: -0.02em;}
-    h1 {font-size: 3rem; margin-bottom: 0.3rem;}
+    h2, h3 {font-family: Georgia, "Times New Roman", serif; letter-spacing: -0.02em;}
+
+    /* Tabs — inactive tabs use a visible neutral fill so they read as buttons */
     [data-baseweb="tab-list"] {gap: 0.5rem;}
-    [data-baseweb="tab"] {background: rgba(255,255,255,0.72); border-radius: 999px; border: 1px solid rgba(20,31,40,0.10); padding: 0.6rem 1rem;}
+    [data-baseweb="tab"] {
+        background: #dde3e8;
+        border-radius: 999px;
+        border: 1px solid rgba(20,31,40,0.18);
+        padding: 0.6rem 1rem;
+        color: #3d4e5c;
+        font-weight: 500;
+    }
     [data-baseweb="tab"][aria-selected="true"] {background: #12212d; color: #f8fafc;}
-    .hero-shell {padding: 1.6rem 1.8rem; border-radius: 28px; background: linear-gradient(135deg, rgba(11,110,79,0.97), rgba(18,33,45,0.96)); color: #f6f8fb; border: 1px solid rgba(255,255,255,0.18); box-shadow: 0 22px 60px rgba(18,33,45,0.18); margin-bottom: 1.25rem;}
+
+    /* Hero */
+    .hero-shell {
+        padding: 1.6rem 1.8rem;
+        border-radius: 28px;
+        background: linear-gradient(135deg, rgba(11,110,79,0.97), rgba(18,33,45,0.96));
+        color: #f6f8fb;
+        border: 1px solid rgba(255,255,255,0.18);
+        box-shadow: 0 22px 60px rgba(18,33,45,0.18);
+        margin-bottom: 1.25rem;
+    }
     .hero-kicker {text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.78rem; opacity: 0.82;}
-    .hero-title {font-family: Georgia, "Times New Roman", serif; font-size: 2.55rem; line-height: 1.05; margin: 0.35rem 0 0.55rem;}
+    .hero-title {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.6rem, 4vw, 2.55rem);
+        line-height: 1.05;
+        margin: 0.35rem 0 0.55rem;
+    }
     .hero-copy {font-size: 1.04rem; line-height: 1.7; max-width: 54rem; color: rgba(246,248,251,0.92);}
     .hero-chip-row {display: flex; flex-wrap: wrap; gap: 0.65rem; margin-top: 1rem;}
-    .hero-chip {padding: 0.45rem 0.8rem; border-radius: 999px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.16); font-size: 0.92rem;}
+    .hero-chip {
+        padding: 0.45rem 0.8rem;
+        border-radius: 999px;
+        background: rgba(255,255,255,0.14);
+        border: 1px solid rgba(255,255,255,0.16);
+        font-size: 0.92rem;
+    }
+
+    /* Metric band */
     .metric-band {display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.85rem; margin: 0.35rem 0 1.1rem;}
-    .metric-card {padding: 1rem 1.05rem; border-radius: 22px; background: rgba(255,255,255,0.84); border: 1px solid rgba(18,33,45,0.08); box-shadow: 0 12px 30px rgba(18,33,45,0.06);}
+    .metric-card {
+        padding: 1rem 1.05rem;
+        border-radius: 22px;
+        background: rgba(255,255,255,0.84);
+        border: 1px solid rgba(18,33,45,0.08);
+        box-shadow: 0 12px 30px rgba(18,33,45,0.06);
+    }
     .metric-label {font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.08em; color: #5b6875; margin-bottom: 0.35rem;}
     .metric-value {font-size: 1.7rem; font-weight: 700; color: #12212d;}
     .metric-caption {font-size: 0.92rem; color: #53606d; margin-top: 0.15rem;}
-    .insight-note {margin-top: 0.85rem; padding: 0.9rem 1rem; border-radius: 18px; background: rgba(11,110,79,0.07); border-left: 4px solid #0B6E4F; color: #23313d; line-height: 1.65;}
-    .status-pill {display: inline-block; padding: 0.28rem 0.7rem; border-radius: 999px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.03em; color: white;}
-    .scenario-card {padding: 1rem 1.05rem; border-radius: 20px; background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(244,246,248,0.92)); border: 1px solid rgba(18,33,45,0.08);}
+
+    /* Insight note */
+    .insight-note {
+        margin-top: 0.85rem;
+        padding: 0.9rem 1rem;
+        border-radius: 18px;
+        background: rgba(11,110,79,0.07);
+        border-left: 4px solid #0B6E4F;
+        color: #23313d;
+        line-height: 1.65;
+    }
+
+    /* Status pill */
+    .status-pill {
+        display: inline-block;
+        padding: 0.28rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        color: white;
+    }
+
+    /* Scenario card */
+    .scenario-card {
+        padding: 1rem 1.05rem;
+        border-radius: 20px;
+        background: linear-gradient(180deg, rgba(255,255,255,0.88), rgba(244,246,248,0.92));
+        border: 1px solid rgba(18,33,45,0.08);
+    }
     .scenario-label {text-transform: uppercase; font-size: 0.74rem; letter-spacing: 0.12em; color: #6a7785;}
+
+    /* Probability bars */
     .probability-row {margin-bottom: 0.75rem;}
     .probability-header {display: flex; justify-content: space-between; gap: 1rem; font-size: 0.95rem; margin-bottom: 0.28rem; color: #1e2a35;}
     .probability-track {width: 100%; height: 12px; border-radius: 999px; background: rgba(18,33,45,0.08); overflow: hidden;}
     .probability-fill {height: 100%; border-radius: 999px;}
-    .risk-shell {padding: 1.1rem 1.2rem; border-radius: 24px; background: linear-gradient(145deg, rgba(18,33,45,0.98), rgba(37,55,68,0.94)); color: #eff6f7; border: 1px solid rgba(255,255,255,0.08);}
+
+    /* Risk card */
+    .risk-shell {
+        padding: 1.1rem 1.2rem;
+        border-radius: 24px;
+        background: linear-gradient(145deg, rgba(18,33,45,0.98), rgba(37,55,68,0.94));
+        color: #eff6f7;
+        border: 1px solid rgba(255,255,255,0.08);
+    }
     .risk-score {font-size: 3rem; line-height: 1; font-weight: 800; margin: 0.35rem 0 0.45rem;}
     .risk-caption {color: rgba(239,246,247,0.84); line-height: 1.6;}
+
+    /* Tables */
     .stDataFrame, div[data-testid="stTable"] {border-radius: 16px; overflow: hidden;}
     </style>
     """, unsafe_allow_html=True)
@@ -150,7 +231,18 @@ def render_risk_card(pred_display, proba_df):
         risk_label, accent = "Elevated risk", "#C76B18"
     else:
         risk_label, accent = "Lower risk", "#2F7D4A"
-    st.markdown(f"<div class='risk-shell'><div class='hero-kicker' style='color: rgba(239,246,247,0.68);'>Live assessment</div><div class='risk-score' style='color:{accent};'>{risk_score:.0%}</div><div style='font-size:1.05rem; font-weight:700; margin-bottom:0.4rem;'>{risk_label}</div><div class='risk-caption'>Predicted outcome: <strong>{pred_display}</strong>. This score uses the non-benign probability mass as a simple triage signal for the current feature profile.</div></div>", unsafe_allow_html=True)
+    st.markdown(f"""
+    <div class='risk-shell'>
+        <div class='hero-kicker' style='color: rgba(239,246,247,0.68);'>Live assessment</div>
+        <div class='risk-score' style='color:{accent};'>{risk_score:.0%}</div>
+        <div style='font-size:1.05rem; font-weight:700; margin-bottom:0.4rem;'>{risk_label}</div>
+        <div class='risk-caption'>
+            Predicted outcome: <strong>{pred_display}</strong>.
+            This score uses the non-benign probability mass as a simple triage signal
+            for the current feature profile.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
 def apply_preset_values(preset_name):
     for feature_name, feature_value in PRESET_SCENARIOS[preset_name]["values"].items():
@@ -274,7 +366,7 @@ def plot_multiclass_roc_ovr(model, X_eval, y_true, class_names, title, label_enc
     plt.tight_layout()
     return fig
 
-st.set_page_config(page_title="MSIS 522 HW1 - Prompt Attack Detector", layout="wide")
+st.set_page_config(page_title="MSIS 522 HW1 - Prompt Attack Detector", page_icon="🛡️", layout="wide")
 inject_custom_css()
 sns.set_theme(style="whitegrid")
 plt.rcParams.update({
@@ -335,22 +427,8 @@ def render_prediction_outputs(pred_display, proba_df, model_name):
     with metric_col3:
         st.metric("Runner-Up", proba_df.loc[1, "Class"] if len(proba_df) > 1 else "n/a")
 
-    left_col, right_col = st.columns([1.05, 1], gap="large")
-
-    with left_col:
-        st.markdown("#### Class Probability Profile")
-        render_probability_bars(proba_df)
-
-    with right_col:
-        palette = [CLASS_COLOR_MAP.get(label, "#12212d") for label in proba_df["Class"]]
-        fig, ax = plt.subplots(figsize=(5.8, 3.2))
-        ax.bar(proba_df["Class"], proba_df["Probability"], color=palette)
-        ax.set_xlabel("")
-        ax.set_ylabel("Probability")
-        ax.tick_params(axis="x", rotation=15)
-        style_axis(ax, f"Probability spread — {model_name}")
-        plt.tight_layout()
-        st.pyplot(fig, clear_figure=True)
+    st.markdown("#### Class Probability Profile")
+    render_probability_bars(proba_df)
 
 sklearn_models = load_sklearn_prediction_models()
 
@@ -483,11 +561,6 @@ with tab1:
     st.write(
         "This app presents the end-to-end workflow for prompt attack detection: dataset framing, descriptive analytics, model evaluation, SHAP explainability, and interactive prediction."
     )
-    render_metric_band([
-        ("Rows", "6,274", "Structured prompt examples after reframing"),
-        ("Feature families", "18", "Signals spanning style, structure, secrecy, and exfiltration"),
-        ("Deployment winner", "XGBoost", "Best balance across macro F1, AUC, and robustness"),
-    ])
     st.markdown("### Threat classes")
     pill_col1, pill_col2, pill_col3 = st.columns(3)
     with pill_col1:
@@ -650,7 +723,9 @@ with tab2:
             st.subheader("Word Count by Class")
 
             fig, ax = plt.subplots(figsize=(6.8, 4.2))
-            sns.violinplot(data=df, x="target_display", y="word_count", ax=ax)
+            sns.violinplot(data=df, x="target_display", y="word_count", ax=ax,
+                           order=class_order,
+                           palette={c: CLASS_COLOR_MAP[c] for c in class_order})
             ax.set_title("Word Count Distribution by Class")
             ax.set_xlabel("")
             ax.set_ylabel("Word Count")
@@ -679,6 +754,8 @@ with tab2:
                 data=df,
                 x="override_phrase_count",
                 hue="target_display",
+                hue_order=class_order,
+                palette={c: CLASS_COLOR_MAP[c] for c in class_order},
                 multiple="stack",
                 bins=10,
                 ax=ax
@@ -699,7 +776,9 @@ with tab2:
             st.subheader("Secret Keyword Count")
 
             fig, ax = plt.subplots(figsize=(6.8, 4.2))
-            sns.boxenplot(data=df, x="target_display", y="secret_keyword_count", ax=ax)
+            sns.boxenplot(data=df, x="target_display", y="secret_keyword_count", ax=ax,
+                          order=class_order,
+                          palette={c: CLASS_COLOR_MAP[c] for c in class_order})
             ax.set_title("Secret Keyword Count by Class")
             ax.set_xlabel("")
             ax.set_ylabel("Secret Keyword Count")
@@ -997,7 +1076,9 @@ with tab4:
         with st.container(border=True):
             st.subheader("Global SHAP Summary")
             plt.figure(figsize=(7.2, 4.8))
+            plt.gcf().patch.set_facecolor("#fcfcfb")
             shap.plots.beeswarm(explanation_summary, max_display=10, show=False)
+            plt.gca().set_facecolor("#fcfcfb")
             plt.title("SHAP Summary - Injection/Exfil/Tool Hijack")
             plt.tight_layout()
             st.pyplot(plt.gcf(), clear_figure=True)
@@ -1038,13 +1119,17 @@ with tab4:
                 apply_preset_values(preset_name)
                 st.session_state["tab4_applied_preset"] = preset_name
             active_preset = PRESET_SCENARIOS[preset_name]
+            expected_display = display_class_map.get(active_preset["target_class"], active_preset["target_class"])
+            expected_color = CLASS_COLOR_MAP.get(expected_display, "#12212d")
             st.markdown(
                 f"""
                 <div class='scenario-card'>
                     <div class='scenario-label'>Preset description</div>
                     <div style='font-size:1.05rem; font-weight:700; margin:0.4rem 0 0.35rem;'>{preset_name}</div>
                     <div style='line-height:1.65; color:#33414d;'>{active_preset['description']}</div>
-                    <div class='scenario-label' style='margin-top:0.9rem;'>Representative prompt</div>
+                    <div class='scenario-label' style='margin-top:0.9rem;'>Expected class</div>
+                    <span class='status-pill' style='background:{expected_color}; margin:0.35rem 0 0.6rem; display:inline-block;'>{expected_display}</span>
+                    <div class='scenario-label' style='margin-top:0.5rem;'>Representative prompt</div>
                     <div style='font-style:italic; line-height:1.65; color:#1f2c37;'>"{active_preset['prompt']}"</div>
                 </div>
                 """,
