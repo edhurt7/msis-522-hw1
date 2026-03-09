@@ -212,9 +212,9 @@ def inject_custom_css():
         color: #f8fafc;
         border-color: #12212d;
     }
-    [data-testid="stRadio"] input[type="radio"] {
-        display: none;
-    }
+    [data-testid="stRadio"] input[type="radio"] { display: none; }
+    /* Hide Streamlit's custom radio circle indicator so only text shows */
+    [data-testid="stRadio"] label > div:first-child { display: none; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -1140,33 +1140,48 @@ with tab4:
 
     st.divider()
 
-    with st.container(border=True):
-        st.subheader("Scenario Presets")
-        preset_name = st.selectbox(
-            "Start from a representative prompt profile",
-            list(PRESET_SCENARIOS.keys()),
-            key="tab4_preset_choice"
-        )
-        if st.session_state.get("tab4_applied_preset") != preset_name:
-            apply_preset_values(preset_name)
-            st.session_state["tab4_applied_preset"] = preset_name
-        active_preset = PRESET_SCENARIOS[preset_name]
-        expected_display = display_class_map.get(active_preset["target_class"], active_preset["target_class"])
-        expected_color = CLASS_COLOR_MAP.get(expected_display, "#12212d")
-        st.markdown(
-            f"""
-            <div class='scenario-card'>
-                <div class='scenario-label'>Preset description</div>
-                <div style='font-size:1.05rem; font-weight:700; margin:0.4rem 0 0.35rem;'>{preset_name}</div>
-                <div style='line-height:1.65; color:#33414d;'>{active_preset['description']}</div>
-                <div class='scenario-label' style='margin-top:0.9rem;'>Expected class</div>
-                <span class='status-pill' style='background:{expected_color}; margin:0.35rem 0 0.6rem; display:inline-block;'>{expected_display}</span>
-                <div class='scenario-label' style='margin-top:0.5rem;'>Representative prompt</div>
-                <div style='font-style:italic; line-height:1.65; color:#1f2c37;'>"{active_preset['prompt']}"</div>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )
+    preset_col, model_col = st.columns([1, 1], gap="large")
+
+    with preset_col:
+        with st.container(border=True):
+            st.subheader("Scenario Presets")
+            preset_name = st.selectbox(
+                "Start from a representative prompt profile",
+                list(PRESET_SCENARIOS.keys()),
+                key="tab4_preset_choice"
+            )
+            if st.session_state.get("tab4_applied_preset") != preset_name:
+                apply_preset_values(preset_name)
+                st.session_state["tab4_applied_preset"] = preset_name
+            active_preset = PRESET_SCENARIOS[preset_name]
+            expected_display = display_class_map.get(active_preset["target_class"], active_preset["target_class"])
+            expected_color = CLASS_COLOR_MAP.get(expected_display, "#12212d")
+            st.markdown(
+                f"""
+                <div class='scenario-card'>
+                    <div class='scenario-label'>Preset description</div>
+                    <div style='font-size:1.05rem; font-weight:700; margin:0.4rem 0 0.35rem;'>{preset_name}</div>
+                    <div style='line-height:1.65; color:#33414d;'>{active_preset['description']}</div>
+                    <div class='scenario-label' style='margin-top:0.9rem;'>Expected class</div>
+                    <span class='status-pill' style='background:{expected_color}; margin:0.35rem 0 0.6rem; display:inline-block;'>{expected_display}</span>
+                    <div class='scenario-label' style='margin-top:0.5rem;'>Representative prompt</div>
+                    <div style='font-style:italic; line-height:1.65; color:#1f2c37;'>"{active_preset['prompt']}"</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+    with model_col:
+        with st.container(border=True):
+            st.markdown("#### Prediction model")
+            model_choice = st.radio(
+                "Prediction model",
+                ["XGBoost", "Logistic Regression", "Decision Tree", "Random Forest", "MLP"],
+                horizontal=True,
+                key="tab4_model_choice",
+                label_visibility="collapsed"
+            )
+            plot_note("The local SHAP waterfall always stays anchored to XGBoost regardless of which model is selected here.")
 
     st.divider()
 
@@ -1185,17 +1200,6 @@ with tab4:
             secret_keyword_count = st.slider("Secret keyword count", min_value=0, max_value=10, key="input_secret_keyword_count")
             exfil_phrase_count = st.slider("Exfiltration phrase count", min_value=0, max_value=10, key="input_exfil_phrase_count")
             harm_keyword_count = st.slider("Harm keyword count", min_value=0, max_value=10, key="input_harm_keyword_count")
-
-    with st.container(border=True):
-        st.markdown("#### Prediction model")
-        model_choice = st.radio(
-            "Prediction model",
-            ["XGBoost", "Logistic Regression", "Decision Tree", "Random Forest", "MLP"],
-            horizontal=True,
-            key="tab4_model_choice",
-            label_visibility="collapsed"
-        )
-        plot_note("The local SHAP waterfall always stays anchored to XGBoost regardless of which model is selected here.")
 
     preset_target_class = active_preset["target_class"]
     defaults = build_user_input(df, preset_target_class)
