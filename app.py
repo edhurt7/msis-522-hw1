@@ -209,9 +209,11 @@ def inject_custom_css():
     }
     [data-testid="stRadio"] label:has(input:checked) {
         background: #12212d;
-        color: #f8fafc;
+        color: #f8fafc !important;
         border-color: #12212d;
     }
+    /* Force text color on all child nodes of the selected pill */
+    [data-testid="stRadio"] label:has(input:checked) * { color: #f8fafc !important; }
     [data-testid="stRadio"] input[type="radio"] { display: none; }
     /* Hide Streamlit's custom radio circle indicator so only text shows */
     [data-testid="stRadio"] label > div:first-child { display: none; }
@@ -1140,10 +1142,10 @@ with tab4:
 
     st.divider()
 
-    preset_col, model_col = st.columns([1, 1], gap="large")
+    with st.container(border=True):
+        preset_col, model_col = st.columns([1, 1], gap="large")
 
-    with preset_col:
-        with st.container(border=True):
+        with preset_col:
             st.subheader("Scenario Presets")
             preset_name = st.selectbox(
                 "Start from a representative prompt profile",
@@ -1171,8 +1173,7 @@ with tab4:
                 unsafe_allow_html=True
             )
 
-    with model_col:
-        with st.container(border=True):
+        with model_col:
             st.markdown("#### Prediction model")
             model_choice = st.radio(
                 "Prediction model",
