@@ -178,6 +178,43 @@ def inject_custom_css():
 
     /* Tables */
     .stDataFrame, div[data-testid="stTable"] {border-radius: 16px; overflow: hidden;}
+
+    /* Selectboxes — visible background and border, no freeform typing */
+    [data-baseweb="select"] > div:first-child {
+        background-color: #dde3e8 !important;
+        border: 1px solid rgba(20,31,40,0.22) !important;
+        border-radius: 10px !important;
+    }
+    [data-baseweb="select"] input {
+        pointer-events: none;
+        caret-color: transparent;
+    }
+
+    /* Radio group styled as pill row (model selector) */
+    [data-testid="stRadio"] > div {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+    [data-testid="stRadio"] label {
+        background: #dde3e8;
+        border-radius: 999px;
+        border: 1px solid rgba(20,31,40,0.18);
+        padding: 0.4rem 0.95rem;
+        cursor: pointer;
+        font-weight: 500;
+        color: #3d4e5c;
+        margin: 0 !important;
+    }
+    [data-testid="stRadio"] label:has(input:checked) {
+        background: #12212d;
+        color: #f8fafc;
+        border-color: #12212d;
+    }
+    [data-testid="stRadio"] input[type="radio"] {
+        display: none;
+    }
     </style>
     """, unsafe_allow_html=True)
 
@@ -680,13 +717,20 @@ with tab2:
     minority_class = class_counts_series.idxmin()
     minority_count = int(class_counts_series.min())
 
-    m1, m2, m3 = st.columns(3)
-    with m1:
-        st.metric("Total Samples", f"{total_rows:,}")
-    with m2:
-        st.metric("Engineered Features", total_features)
-    with m3:
-        st.metric("Minority Class", f"{minority_class} ({minority_count:,})")
+    minority_color = CLASS_COLOR_MAP.get(minority_class, "#12212d")
+    st.markdown(
+        f"""
+        <div style='display:flex; align-items:center; gap:0.75rem; padding:0.7rem 0.2rem;'>
+            <span class='status-pill' style='background:{minority_color}; white-space:nowrap;'>{minority_class}</span>
+            <span style='color:#5b6875; font-size:0.97rem; line-height:1.5;'>
+                Minority class with <strong style='color:#12212d;'>{minority_count:,}</strong> of
+                {total_rows:,} samples — macro F1 was used as the primary evaluation metric
+                to account for this imbalance.
+            </span>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
     st.divider()
 
@@ -1053,7 +1097,6 @@ with tab4:
     render_metric_band([
         ("Live models", "5", "XGBoost, Random Forest, Decision Tree, Logistic Regression, and MLP"),
         ("SHAP explainer", "XGBoost", "Global summary and local waterfall are tied to the top tree-based model"),
-        ("Custom controls", "8", "Direct manipulation of the strongest interactive prompt-risk signals"),
     ])
 
     target_class_for_summary = "Injection_Exfil_ToolHijack"
@@ -1097,44 +1140,33 @@ with tab4:
 
     st.divider()
 
-    control_col1, control_col2 = st.columns([0.9, 1.1], gap="large")
-    with control_col1:
-        with st.container(border=True):
-            st.subheader("Prediction Model")
-            model_choice = st.selectbox(
-                "Select which model to use for prediction",
-                ["XGBoost", "Logistic Regression", "Decision Tree", "Random Forest", "MLP"],
-                key="tab4_model_choice"
-            )
-            plot_note("The selected model controls the live classification result below. The local SHAP waterfall stays tied to XGBoost so the explanation lens remains consistent.")
-    with control_col2:
-        with st.container(border=True):
-            st.subheader("Scenario Presets")
-            preset_name = st.selectbox(
-                "Start from a representative prompt profile",
-                list(PRESET_SCENARIOS.keys()),
-                key="tab4_preset_choice"
-            )
-            if st.session_state.get("tab4_applied_preset") != preset_name:
-                apply_preset_values(preset_name)
-                st.session_state["tab4_applied_preset"] = preset_name
-            active_preset = PRESET_SCENARIOS[preset_name]
-            expected_display = display_class_map.get(active_preset["target_class"], active_preset["target_class"])
-            expected_color = CLASS_COLOR_MAP.get(expected_display, "#12212d")
-            st.markdown(
-                f"""
-                <div class='scenario-card'>
-                    <div class='scenario-label'>Preset description</div>
-                    <div style='font-size:1.05rem; font-weight:700; margin:0.4rem 0 0.35rem;'>{preset_name}</div>
-                    <div style='line-height:1.65; color:#33414d;'>{active_preset['description']}</div>
-                    <div class='scenario-label' style='margin-top:0.9rem;'>Expected class</div>
-                    <span class='status-pill' style='background:{expected_color}; margin:0.35rem 0 0.6rem; display:inline-block;'>{expected_display}</span>
-                    <div class='scenario-label' style='margin-top:0.5rem;'>Representative prompt</div>
-                    <div style='font-style:italic; line-height:1.65; color:#1f2c37;'>"{active_preset['prompt']}"</div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
+    with st.container(border=True):
+        st.subheader("Scenario Presets")
+        preset_name = st.selectbox(
+            "Start from a representative prompt profile",
+            list(PRESET_SCENARIOS.keys()),
+            key="tab4_preset_choice"
+        )
+        if st.session_state.get("tab4_applied_preset") != preset_name:
+            apply_preset_values(preset_name)
+            st.session_state["tab4_applied_preset"] = preset_name
+        active_preset = PRESET_SCENARIOS[preset_name]
+        expected_display = display_class_map.get(active_preset["target_class"], active_preset["target_class"])
+        expected_color = CLASS_COLOR_MAP.get(expected_display, "#12212d")
+        st.markdown(
+            f"""
+            <div class='scenario-card'>
+                <div class='scenario-label'>Preset description</div>
+                <div style='font-size:1.05rem; font-weight:700; margin:0.4rem 0 0.35rem;'>{preset_name}</div>
+                <div style='line-height:1.65; color:#33414d;'>{active_preset['description']}</div>
+                <div class='scenario-label' style='margin-top:0.9rem;'>Expected class</div>
+                <span class='status-pill' style='background:{expected_color}; margin:0.35rem 0 0.6rem; display:inline-block;'>{expected_display}</span>
+                <div class='scenario-label' style='margin-top:0.5rem;'>Representative prompt</div>
+                <div style='font-style:italic; line-height:1.65; color:#1f2c37;'>"{active_preset['prompt']}"</div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
 
     st.divider()
 
@@ -1153,6 +1185,17 @@ with tab4:
             secret_keyword_count = st.slider("Secret keyword count", min_value=0, max_value=10, key="input_secret_keyword_count")
             exfil_phrase_count = st.slider("Exfiltration phrase count", min_value=0, max_value=10, key="input_exfil_phrase_count")
             harm_keyword_count = st.slider("Harm keyword count", min_value=0, max_value=10, key="input_harm_keyword_count")
+
+    with st.container(border=True):
+        st.markdown("#### Prediction model")
+        model_choice = st.radio(
+            "Prediction model",
+            ["XGBoost", "Logistic Regression", "Decision Tree", "Random Forest", "MLP"],
+            horizontal=True,
+            key="tab4_model_choice",
+            label_visibility="collapsed"
+        )
+        plot_note("The local SHAP waterfall always stays anchored to XGBoost regardless of which model is selected here.")
 
     preset_target_class = active_preset["target_class"]
     defaults = build_user_input(df, preset_target_class)
